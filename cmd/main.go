@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/shehbaazsk/go-commerce/config"
+	"github.com/shehbaazsk/go-commerce/middlewares"
 )
 
 func main() {
@@ -14,6 +15,11 @@ func main() {
 
 	// Initialize Gin router
 	router := gin.Default()
+
+	// Apply custom logger middleware
+	router.Use(middlewares.CustomGinLogger())
+
+	router.Use(gin.Recovery())
 
 	// Health check route
 	router.GET("/ping", func(c *gin.Context) {
