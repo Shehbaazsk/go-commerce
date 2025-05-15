@@ -15,7 +15,7 @@ func LoadConfig() {
 	}
 
 	LoadAppConfig()
-	LoadDBConfig()
+	ConnectDB()
 }
 
 func getEnv(key, fallback string) string {
