@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/shehbaazsk/go-commerce/config"
 	"github.com/shehbaazsk/go-commerce/middlewares"
+	"github.com/shehbaazsk/go-commerce/routes"
 )
 
 func main() {
@@ -21,10 +22,7 @@ func main() {
 
 	router.Use(gin.Recovery())
 
-	// Health check route
-	router.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{"message": "pong"})
-	})
+	routes.InitRoutes(router)
 
 	// Start the server
 	log.Println("Starting server on port " + config.App.AppPort)
