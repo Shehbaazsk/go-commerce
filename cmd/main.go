@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -9,8 +10,17 @@ import (
 )
 
 func main() {
-	//Initialize configuration
+	// Initialize configuration
 	config.InitConfig()
+
+	// Connect to DB
+	dbpool, err := config.ConnectDB()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer dbpool.Close()
+
+	fmt.Println("Connected to Database successfully!")
 
 	// Initialize Gin router
 	router := gin.New()

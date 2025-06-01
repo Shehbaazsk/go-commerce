@@ -32,7 +32,7 @@ func CustomLogger() gin.HandlerFunc {
 	gin.DefaultWriter = io.MultiWriter(os.Stdout, logFile)
 
 	return gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
-		return fmt.Sprintf(`{"time":"%s","status":%d,"method":"%s","path":"%s","latency":"%f sec","ip":"%s"}`+"\n",
+		return fmt.Sprintf(`{"time":"%s","status":%d,"method":"%s","path":"%s","latency(In Sec)":"%f","ip":"%s"}`+"\n",
 			param.TimeStamp.Format("02-01-2006 03:04:05 PM"),
 			param.StatusCode,
 			param.Method,

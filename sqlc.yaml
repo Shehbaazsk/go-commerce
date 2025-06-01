@@ -1,0 +1,21 @@
+version: "1"
+
+sql:
+  - engine: "postgresql"
+    schema: "db/migrations"
+    queries: "db/sqlc"
+    gen:
+      go:
+        package: "db"
+        sql_package: "pgx/v5"
+        out: "db/queries"
+        emit_json_tags: true
+        emit_interface: false
+        emit_exact_table_names: false
+        overrides:
+          - db_type: "pg_catalog.numeric"
+            go_type: "float64"
+          - db_type: "timestamptz"
+            go_type: "time.Time"
+
+  

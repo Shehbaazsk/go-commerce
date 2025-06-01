@@ -29,3 +29,4 @@ go.work
 /logs/
 *.log
 .env
+.vscode/
