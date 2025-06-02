@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/joho/godotenv"
 )
@@ -15,15 +16,15 @@ type AppConfig struct {
 var App *AppConfig
 
 func LoadAppConfig() {
-	wd, err := os.Getwd()
+	exePath, err := os.Executable()
 	if err != nil {
-		log.Fatalf("Failed to get working directory: %v", err)
+		log.Fatalf("Failed to get executable path: %v", err)
 	}
 
-	// Construct full path to .env relative to project root
-	envPath := wd + "/.env"
+	// Get the root directory (two levels up inside /cmd)
+	projectRoot := filepath.Dir(filepath.Dir(exePath))
 
-	// Load .env
+	envPath := filepath.Join(projectRoot, ".env")
 	if err := godotenv.Load(envPath); err != nil {
 		log.Fatalf("Error loading .env file from %s: %v", envPath, err)
 	}

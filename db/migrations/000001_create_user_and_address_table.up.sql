@@ -1,3 +1,29 @@
+-- Function and Trigger for updated_at (PostgreSQL specific)
+-- This function will update the 'updated_at' column automatically on row updates.
+CREATE OR REPLACE FUNCTION update_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+-- Table: roles
+CREATE TABLE IF NOT EXISTS roles (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE,
+    description VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Trigger for roles table
+CREATE TRIGGER set_roles_updated_at
+BEFORE UPDATE ON roles
+FOR EACH ROW
+EXECUTE FUNCTION update_timestamp();
 
 -- Table: users
 CREATE TABLE IF NOT EXISTS users (
@@ -13,21 +39,23 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Function and Trigger for updated_at (PostgreSQL specific)
--- This function will update the 'updated_at' column automatically on row updates.
-CREATE OR REPLACE FUNCTION update_timestamp()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = NOW();
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
 
 -- Trigger for users table
 CREATE TRIGGER set_users_updated_at
 BEFORE UPDATE ON users
 FOR EACH ROW
 EXECUTE FUNCTION update_timestamp();
+
+-- Join Table: user_roles
+CREATE TABLE IF NOT EXISTS user_roles (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    role_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE,
+    UNIQUE (user_id, role_id)
+);
 
 -- Table: countries
 CREATE TABLE IF NOT EXISTS countries (
@@ -47,11 +75,12 @@ EXECUTE FUNCTION update_timestamp();
 -- Table: states
 CREATE TABLE IF NOT EXISTS states (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL,
     country_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (country_id) REFERENCES countries(id) ON DELETE CASCADE
+    FOREIGN KEY (country_id) REFERENCES countries(id) ON DELETE CASCADE,
+    UNIQUE (name, country_id)
 );
 
 -- Trigger for states table
@@ -67,7 +96,8 @@ CREATE TABLE IF NOT EXISTS cities (
     state_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (state_id) REFERENCES states(id) ON DELETE CASCADE
+    FOREIGN KEY (state_id) REFERENCES states(id) ON DELETE CASCADE,
+    UNIQUE (name, state_id)
 );
 
 -- Trigger for cities table
