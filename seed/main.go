@@ -103,7 +103,7 @@ func main() {
 					if err != nil {
 						log.Fatalf("Failed to insert city '%s': %v", cityName, err)
 					}
-					fmt.Printf("    City: %s\n", cityName)
+					fmt.Printf("City: %s\n", cityName)
 				}
 			}
 		}
