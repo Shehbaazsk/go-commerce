@@ -1,6 +1,9 @@
 package config
 
-import "os"
+import (
+	"os"
+	"strconv"
+)
 
 func InitConfig() {
 	LoadAppConfig()
@@ -13,4 +16,16 @@ func getEnv(key, fallback string) string {
 		return fallback
 	}
 	return val
+}
+
+func getEnvInt(key string, fallback int) int {
+	val := os.Getenv(key)
+	if val == "" {
+		return fallback
+	}
+	intValue, err := strconv.Atoi(val)
+	if err != nil {
+		return fallback
+	}
+	return intValue
 }

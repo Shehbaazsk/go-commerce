@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/joho/godotenv"
 	"github.com/shehbaazsk/go-commerce/config"
@@ -20,9 +21,17 @@ type CountryDetail struct {
 }
 
 func main() {
-	// Load environment variables
-	if err := godotenv.Load("../.env"); err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
+	exePath, err := os.Executable()
+	if err != nil {
+		log.Fatalf("Failed to get executable path: %v", err)
+	}
+
+	// Get the root directory (two levels up inside /cmd)
+	projectRoot := filepath.Dir(filepath.Dir(exePath))
+
+	envPath := filepath.Join(projectRoot, ".env")
+	if err := godotenv.Load(envPath); err != nil {
+		log.Fatalf("Error loading .env file from %s: %v", envPath, err)
 	}
 
 	// Connect to PostgreSQL DB

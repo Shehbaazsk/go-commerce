@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/gin-gonic/gin"
 	"github.com/shehbaazsk/go-commerce/config"
-	"github.com/shehbaazsk/go-commerce/middlewares"
+	"github.com/shehbaazsk/go-commerce/router"
 )
 
 func main() {
@@ -23,18 +22,7 @@ func main() {
 	fmt.Println("Connected to Database successfully!")
 
 	// Initialize Gin router
-	router := gin.New()
-
-	// Attach middleware
-	router.Use(gin.Recovery())
-	router.Use(middlewares.CustomLogger())
-
-	// Health check route
-	router.GET("/health", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"status": "API is running",
-		})
-	})
+	router := router.SetupRouter(dbpool)
 
 	// Start the server
 	log.Printf("Starting server on %s:%s", config.App.HOST, config.App.Port)

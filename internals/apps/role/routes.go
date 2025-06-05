@@ -1,0 +1,32 @@
+package role
+
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5/pgxpool"
+	db "github.com/shehbaazsk/go-commerce/db/queries"
+	"github.com/shehbaazsk/go-commerce/internals/constants"
+	"github.com/shehbaazsk/go-commerce/middlewares"
+)
+
+func RegisterPublicRoutes(rg *gin.RouterGroup, db *pgxpool.Pool, queries *db.Queries) {
+	// h := NewHandler(queries)
+	roles := rg.Group("/roles")
+	{
+		roles.GET("/", func(c *gin.Context) {
+			// implement logic to get all roles
+		})
+	}
+	// other public routes for role module
+}
+
+func RegisterProtectedRoutes(rg *gin.RouterGroup, db *pgxpool.Pool, queries *db.Queries) {
+	h := NewHandler(queries)
+	roles := rg.Group("/roles")
+	{
+		roles.POST("/", middlewares.RoleMiddleware(db, constants.RoleAdmin), h.CreateRole)
+		roles.GET("/", h.GetAllRoles)
+		roles.GET("/:id", h.GetRoleByID)
+		roles.PATCH("/:id", middlewares.RoleMiddleware(db, constants.RoleAdmin), h.UpdateRole)
+		roles.DELETE("/:id", middlewares.RoleMiddleware(db, constants.RoleAdmin), h.DeleteRole)
+	}
+}
