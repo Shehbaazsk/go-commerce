@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS roles (
 );
 
 -- Trigger for roles table
-CREATE TRIGGER set_roles_updated_at
+CREATE OR REPLACE TRIGGER set_roles_updated_at
 BEFORE UPDATE ON roles
 FOR EACH ROW
 EXECUTE FUNCTION update_timestamp();
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 
 -- Trigger for users table
-CREATE TRIGGER set_users_updated_at
+CREATE OR REPLACE TRIGGER set_users_updated_at
 BEFORE UPDATE ON users
 FOR EACH ROW
 EXECUTE FUNCTION update_timestamp();
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS countries (
 );
 
 -- Trigger for countries table
-CREATE TRIGGER set_countries_updated_at
+CREATE OR REPLACE TRIGGER set_countries_updated_at
 BEFORE UPDATE ON countries
 FOR EACH ROW
 EXECUTE FUNCTION update_timestamp();
@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS states (
 );
 
 -- Trigger for states table
-CREATE TRIGGER set_states_updated_at
+CREATE OR REPLACE TRIGGER set_states_updated_at
 BEFORE UPDATE ON states
 FOR EACH ROW
 EXECUTE FUNCTION update_timestamp();
@@ -102,7 +102,7 @@ CREATE TABLE IF NOT EXISTS cities (
 );
 
 -- Trigger for cities table
-CREATE TRIGGER set_cities_updated_at
+CREATE OR REPLACE TRIGGER set_cities_updated_at
 BEFORE UPDATE ON cities
 FOR EACH ROW
 EXECUTE FUNCTION update_timestamp();
@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS addresses (
 );
 
 -- Trigger for addresses table
-CREATE TRIGGER set_addresses_updated_at
+CREATE OR REPLACE TRIGGER set_addresses_updated_at
 BEFORE UPDATE ON addresses
 FOR EACH ROW
 EXECUTE FUNCTION update_timestamp();
