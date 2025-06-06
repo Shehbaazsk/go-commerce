@@ -3,11 +3,12 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/shehbaazsk/go-commerce/internals/apps/role"
 	"github.com/shehbaazsk/go-commerce/middlewares"
 )
 
 // SetupRouter creates the main Gin engine and mounts all app routes
-func SetupRouter(db *pgxpool.Pool) *gin.Engine {
+func SetupRouter(dbPool *pgxpool.Pool) *gin.Engine {
 	r := gin.New()
 
 	// Attach middleware
@@ -32,6 +33,7 @@ func SetupRouter(db *pgxpool.Pool) *gin.Engine {
 	protected.Use(middlewares.JWTAuthMiddleware())
 	{
 		// IRegister protected routes from apps here
+		role.RegisterProtectedRoutes(protected, dbPool)
 	}
 
 	return r

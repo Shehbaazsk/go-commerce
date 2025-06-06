@@ -7,7 +7,8 @@ package db
 
 import (
 	"context"
-	"database/sql"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createRole = `-- name: CreateRole :one
@@ -17,12 +18,12 @@ RETURNING id, name, description, is_active, created_at, updated_at
 `
 
 type CreateRoleParams struct {
-	Name        string         `json:"name"`
-	Description sql.NullString `json:"description"`
+	Name        string      `json:"name"`
+	Description pgtype.Text `json:"description"`
 }
 
 func (q *Queries) CreateRole(ctx context.Context, arg CreateRoleParams) (Role, error) {
-	row := q.db.QueryRowContext(ctx, createRole, arg.Name, arg.Description)
+	row := q.db.QueryRow(ctx, createRole, arg.Name, arg.Description)
 	var i Role
 	err := row.Scan(
 		&i.ID,
@@ -40,7 +41,7 @@ DELETE FROM roles WHERE id = $1
 `
 
 func (q *Queries) DeleteRole(ctx context.Context, id int32) error {
-	_, err := q.db.ExecContext(ctx, deleteRole, id)
+	_, err := q.db.Exec(ctx, deleteRole, id)
 	return err
 }
 
@@ -49,7 +50,7 @@ SELECT id, name, description, is_active, created_at, updated_at FROM roles rs WH
 `
 
 func (q *Queries) GetRoleByID(ctx context.Context, id int32) (Role, error) {
-	row := q.db.QueryRowContext(ctx, getRoleByID, id)
+	row := q.db.QueryRow(ctx, getRoleByID, id)
 	var i Role
 	err := row.Scan(
 		&i.ID,
@@ -70,21 +71,18 @@ WHERE ur.user_id = $1
 `
 
 func (q *Queries) GetUserRoles(ctx context.Context, userID int32) ([]string, error) {
-	rows, err := q.db.QueryContext(ctx, getUserRoles, userID)
+	rows, err := q.db.Query(ctx, getUserRoles, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []string
+	items := []string{}
 	for rows.Next() {
 		var name string
 		if err := rows.Scan(&name); err != nil {
 			return nil, err
 		}
 		items = append(items, name)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
@@ -97,12 +95,12 @@ SELECT id, name, description, is_active, created_at, updated_at FROM roles ORDER
 `
 
 func (q *Queries) ListRoles(ctx context.Context) ([]Role, error) {
-	rows, err := q.db.QueryContext(ctx, listRoles)
+	rows, err := q.db.Query(ctx, listRoles)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Role
+	items := []Role{}
 	for rows.Next() {
 		var i Role
 		if err := rows.Scan(
@@ -116,9 +114,6 @@ func (q *Queries) ListRoles(ctx context.Context) ([]Role, error) {
 			return nil, err
 		}
 		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
@@ -131,12 +126,12 @@ SELECT id, name, description, is_active, created_at, updated_at FROM roles WHERE
 `
 
 func (q *Queries) ListRolesWithoutAdmin(ctx context.Context) ([]Role, error) {
-	rows, err := q.db.QueryContext(ctx, listRolesWithoutAdmin)
+	rows, err := q.db.Query(ctx, listRolesWithoutAdmin)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Role
+	items := []Role{}
 	for rows.Next() {
 		var i Role
 		if err := rows.Scan(
@@ -150,9 +145,6 @@ func (q *Queries) ListRolesWithoutAdmin(ctx context.Context) ([]Role, error) {
 			return nil, err
 		}
 		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
@@ -165,12 +157,12 @@ SELECT id, name, description, is_active, created_at, updated_at FROM roles WHERE
 `
 
 func (q *Queries) ListRolesWithoutAdminAndStaff(ctx context.Context) ([]Role, error) {
-	rows, err := q.db.QueryContext(ctx, listRolesWithoutAdminAndStaff)
+	rows, err := q.db.Query(ctx, listRolesWithoutAdminAndStaff)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Role
+	items := []Role{}
 	for rows.Next() {
 		var i Role
 		if err := rows.Scan(
@@ -184,9 +176,6 @@ func (q *Queries) ListRolesWithoutAdminAndStaff(ctx context.Context) ([]Role, er
 			return nil, err
 		}
 		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
@@ -202,14 +191,14 @@ RETURNING id, name, description, is_active, created_at, updated_at
 `
 
 type UpdateRoleParams struct {
-	Name        string         `json:"name"`
-	Description sql.NullString `json:"description"`
-	IsActive    sql.NullBool   `json:"is_active"`
-	ID          int32          `json:"id"`
+	Name        string      `json:"name"`
+	Description pgtype.Text `json:"description"`
+	IsActive    pgtype.Bool `json:"is_active"`
+	ID          int32       `json:"id"`
 }
 
 func (q *Queries) UpdateRole(ctx context.Context, arg UpdateRoleParams) (Role, error) {
-	row := q.db.QueryRowContext(ctx, updateRole,
+	row := q.db.QueryRow(ctx, updateRole,
 		arg.Name,
 		arg.Description,
 		arg.IsActive,

@@ -5,70 +5,70 @@
 package db
 
 import (
-	"database/sql"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Address struct {
-	ID        int32          `json:"id"`
-	UserID    int32          `json:"user_id"`
-	Address1  string         `json:"address_1"`
-	Address2  sql.NullString `json:"address_2"`
-	CityID    int32          `json:"city_id"`
-	PinCode   string         `json:"pin_code"`
-	IsActive  sql.NullBool   `json:"is_active"`
-	CreatedAt sql.NullTime   `json:"created_at"`
-	UpdatedAt sql.NullTime   `json:"updated_at"`
+	ID        int32            `json:"id"`
+	UserID    int32            `json:"user_id"`
+	Address1  string           `json:"address_1"`
+	Address2  pgtype.Text      `json:"address_2"`
+	CityID    int32            `json:"city_id"`
+	PinCode   string           `json:"pin_code"`
+	IsActive  pgtype.Bool      `json:"is_active"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
+	UpdatedAt pgtype.Timestamp `json:"updated_at"`
 }
 
 type City struct {
-	ID        int32        `json:"id"`
-	Name      string       `json:"name"`
-	StateID   int32        `json:"state_id"`
-	CreatedAt sql.NullTime `json:"created_at"`
-	UpdatedAt sql.NullTime `json:"updated_at"`
+	ID        int32            `json:"id"`
+	Name      string           `json:"name"`
+	StateID   int32            `json:"state_id"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
+	UpdatedAt pgtype.Timestamp `json:"updated_at"`
 }
 
 type Country struct {
-	ID        int32        `json:"id"`
-	Name      string       `json:"name"`
-	PhoneCode string       `json:"phone_code"`
-	CreatedAt sql.NullTime `json:"created_at"`
-	UpdatedAt sql.NullTime `json:"updated_at"`
+	ID        int32            `json:"id"`
+	Name      string           `json:"name"`
+	PhoneCode string           `json:"phone_code"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
+	UpdatedAt pgtype.Timestamp `json:"updated_at"`
 }
 
 type Role struct {
-	ID          int32          `json:"id"`
-	Name        string         `json:"name"`
-	Description sql.NullString `json:"description"`
-	IsActive    sql.NullBool   `json:"is_active"`
-	CreatedAt   sql.NullTime   `json:"created_at"`
-	UpdatedAt   sql.NullTime   `json:"updated_at"`
+	ID          int32            `json:"id"`
+	Name        string           `json:"name"`
+	Description pgtype.Text      `json:"description"`
+	IsActive    pgtype.Bool      `json:"is_active"`
+	CreatedAt   pgtype.Timestamp `json:"created_at"`
+	UpdatedAt   pgtype.Timestamp `json:"updated_at"`
 }
 
 type State struct {
-	ID        int32        `json:"id"`
-	Name      string       `json:"name"`
-	CountryID int32        `json:"country_id"`
-	CreatedAt sql.NullTime `json:"created_at"`
-	UpdatedAt sql.NullTime `json:"updated_at"`
+	ID        int32            `json:"id"`
+	Name      string           `json:"name"`
+	CountryID int32            `json:"country_id"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
+	UpdatedAt pgtype.Timestamp `json:"updated_at"`
 }
 
 type User struct {
-	ID           int32          `json:"id"`
-	FirstName    string         `json:"first_name"`
-	LastName     sql.NullString `json:"last_name"`
-	Email        string         `json:"email"`
-	PasswordHash string         `json:"password_hash"`
-	PhoneNumber  sql.NullString `json:"phone_number"`
-	DateOfBirth  sql.NullTime   `json:"date_of_birth"`
-	IsActive     sql.NullBool   `json:"is_active"`
-	CreatedAt    sql.NullTime   `json:"created_at"`
-	UpdatedAt    sql.NullTime   `json:"updated_at"`
+	ID           int32            `json:"id"`
+	FirstName    string           `json:"first_name"`
+	LastName     pgtype.Text      `json:"last_name"`
+	Email        string           `json:"email"`
+	PasswordHash string           `json:"password_hash"`
+	PhoneNumber  pgtype.Text      `json:"phone_number"`
+	DateOfBirth  pgtype.Date      `json:"date_of_birth"`
+	IsActive     pgtype.Bool      `json:"is_active"`
+	CreatedAt    pgtype.Timestamp `json:"created_at"`
+	UpdatedAt    pgtype.Timestamp `json:"updated_at"`
 }
 
 type UserRole struct {
-	ID        int32        `json:"id"`
-	UserID    int32        `json:"user_id"`
-	RoleID    int32        `json:"role_id"`
-	CreatedAt sql.NullTime `json:"created_at"`
+	ID        int32            `json:"id"`
+	UserID    int32            `json:"user_id"`
+	RoleID    int32            `json:"role_id"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
 }

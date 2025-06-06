@@ -4,6 +4,7 @@ import (
 	"context"
 	"slices"
 
+	"github.com/jackc/pgx/v5/pgxpool"
 	db "github.com/shehbaazsk/go-commerce/db/queries"
 	"github.com/shehbaazsk/go-commerce/internals/common/converters"
 	"github.com/shehbaazsk/go-commerce/internals/constants"
@@ -14,9 +15,9 @@ func mapRoleToResponse(role db.Role) RoleResponse {
 	return RoleResponse{
 		ID:          int64(role.ID),
 		Name:        role.Name,
-		Description: converters.StringOrNil(role.Description),
-		CreatedAt:   converters.TimeOrNil(role.CreatedAt),
-		UpdatedAt:   converters.TimeOrNil(role.UpdatedAt),
+		Description: converters.TextOrNil(role.Description),
+		CreatedAt:   converters.TimestampOrNil(role.CreatedAt),
+		UpdatedAt:   converters.TimestampOrNil(role.UpdatedAt),
 	}
 }
 
@@ -32,14 +33,15 @@ type service struct {
 	queries *db.Queries
 }
 
-func NewRoleService(q *db.Queries) Service {
-	return &service{queries: q}
+func NewRoleService(dbPool *pgxpool.Pool) Service {
+	queries := db.New(dbPool)
+	return &service{queries: queries}
 }
 
 func (s *service) Create(ctx context.Context, req RoleRequest) (RoleResponse, error) {
 	roleParams := db.CreateRoleParams{
 		Name:        req.Name,
-		Description: converters.StringToNullString(req.Description),
+		Description: converters.StringToPgText(req.Description),
 	}
 	role, err := s.queries.CreateRole(ctx, roleParams)
 	if err != nil {
@@ -51,8 +53,8 @@ func (s *service) Update(ctx context.Context, id int64, req UpdateRoleRequest) (
 	roleParams := db.UpdateRoleParams{
 		ID:          int32(id),
 		Name:        req.Name,
-		Description: converters.StringToNullString(req.Description),
-		IsActive:    converters.BoolToNullBool(req.IsActive),
+		Description: converters.StringToPgText(req.Description),
+		IsActive:    converters.BoolToPgBool(req.IsActive),
 	}
 	role, err := s.queries.UpdateRole(ctx, roleParams)
 	if err != nil {

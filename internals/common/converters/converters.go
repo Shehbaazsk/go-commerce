@@ -1,95 +1,119 @@
 package converters
 
 import (
-	"database/sql"
 	"time"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
-// StringOrNil converts sql.NullString to *string
-func StringOrNil(ns sql.NullString) *string {
-	if ns.Valid {
-		return &ns.String
+// TextOrNil converts pgtype.Text to *string
+func TextOrNil(t pgtype.Text) *string {
+	if t.Valid {
+		return &t.String
 	}
 	return nil
 }
 
-// Int64OrNil converts sql.NullInt64 to *int64
-func Int64OrNil(ni sql.NullInt64) *int64 {
-	if ni.Valid {
-		return &ni.Int64
+// StringToText converts *string to pgtype.Text
+func StringToPgText(s *string) pgtype.Text {
+	if s == nil || *s == "" {
+		return pgtype.Text{Valid: false}
+	}
+	return pgtype.Text{String: *s, Valid: true}
+}
+
+// Int4OrNil converts pgtype.Int4 to *int32
+func Int4OrNil(i pgtype.Int4) *int32 {
+	if i.Valid {
+		return &i.Int32
 	}
 	return nil
 }
 
-// BoolOrNil converts sql.NullBool to *bool
-func BoolOrNil(nb sql.NullBool) *bool {
-	if nb.Valid {
-		return &nb.Bool
+// Int32ToInt4 converts *int32 to pgtype.Int4
+func Int32ToPgInt4(i *int32) pgtype.Int4 {
+	if i == nil {
+		return pgtype.Int4{Valid: false}
+	}
+	return pgtype.Int4{Int32: *i, Valid: true}
+}
+
+// Int8OrNil converts pgtype.Int8 to *int64
+func Int8OrNil(i pgtype.Int8) *int64 {
+	if i.Valid {
+		return &i.Int64
 	}
 	return nil
 }
 
-// TimeOrNil converts sql.NullTime to *time.Time
-func TimeOrNil(nt sql.NullTime) *time.Time {
-	if nt.Valid {
-		return &nt.Time
+// Int64ToInt8 converts *int64 to pgtype.Int8
+func Int64ToPgInt8(i *int64) pgtype.Int8 {
+	if i == nil {
+		return pgtype.Int8{Valid: false}
+	}
+	return pgtype.Int8{Int64: *i, Valid: true}
+}
+
+// Float8OrNil converts pgtype.Float8 to *float64
+func Float8OrNil(f pgtype.Float8) *float64 {
+	if f.Valid {
+		return &f.Float64
 	}
 	return nil
 }
 
-// StringToNullString safely converts *string to sql.NullString
-func StringToNullString(s *string) sql.NullString {
-	if s != nil {
-		return sql.NullString{
-			String: *s,
-			Valid:  true,
-		}
+// Float64ToFloat8 converts *float64 to pgtype.Float8
+func Float64ToPgFloat8(f *float64) pgtype.Float8 {
+	if f == nil {
+		return pgtype.Float8{Valid: false}
 	}
-	return sql.NullString{}
+	return pgtype.Float8{Float64: *f, Valid: true}
 }
 
-// BoolToNullBool safely converts *bool to sql.NullBool
-func BoolToNullBool(b *bool) sql.NullBool {
-	if b != nil {
-		return sql.NullBool{
-			Bool:  *b,
-			Valid: true,
-		}
-	}
-	return sql.NullBool{}
-}
-
-// TimeToNullTime safely converts *time.Time to sql.NullTime
-func TimeToNullTime(t *time.Time) sql.NullTime {
-	if t != nil {
-		return sql.NullTime{
-			Time:  *t,
-			Valid: true,
-		}
-	}
-	return sql.NullTime{}
-}
-
-// NullStringToPointer converts sql.NullString to *string
-func NullStringToPointer(ns sql.NullString) *string {
-	if ns.Valid {
-		return &ns.String
+// BoolOrNil converts pgtype.Bool to *bool
+func BoolOrNil(b pgtype.Bool) *bool {
+	if b.Valid {
+		return &b.Bool
 	}
 	return nil
 }
 
-// NullBoolToPointer converts sql.NullBool to *bool
-func NullBoolToPointer(nb sql.NullBool) *bool {
-	if nb.Valid {
-		return &nb.Bool
+// BoolToPgBool converts *bool to pgtype.Bool
+func BoolToPgBool(b *bool) pgtype.Bool {
+	if b == nil {
+		return pgtype.Bool{Valid: false}
+	}
+	return pgtype.Bool{Bool: *b, Valid: true}
+}
+
+// TimestampOrNil converts pgtype.Timestamp to *time.Time
+func TimestampOrNil(t pgtype.Timestamp) *time.Time {
+	if t.Valid {
+		return &t.Time
 	}
 	return nil
 }
 
-// NullTimeToPointer converts sql.NullTime to *time.Time
-func NullTimeToPointer(nt sql.NullTime) *time.Time {
-	if nt.Valid {
-		return &nt.Time
+// TimeToTimestamp converts *time.Time to pgtype.Timestamp
+func TimeToPgTimestamp(t *time.Time) pgtype.Timestamp {
+	if t == nil {
+		return pgtype.Timestamp{Valid: false}
+	}
+	return pgtype.Timestamp{Time: *t, Valid: true}
+}
+
+// DateOrNil converts pgtype.Date to *time.Time
+func DateOrNil(d pgtype.Date) *time.Time {
+	if d.Valid {
+		return &d.Time
 	}
 	return nil
+}
+
+// TimeToDate converts *time.Time to pgtype.Date
+func TimeToPgDate(t *time.Time) pgtype.Date {
+	if t == nil {
+		return pgtype.Date{Valid: false}
+	}
+	return pgtype.Date{Time: *t, Valid: true}
 }

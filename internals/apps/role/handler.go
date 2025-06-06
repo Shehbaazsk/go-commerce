@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	db "github.com/shehbaazsk/go-commerce/db/queries"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/shehbaazsk/go-commerce/internals/common/response"
 )
 
@@ -13,8 +13,8 @@ type Handler struct {
 	service Service
 }
 
-func NewHandler(queries *db.Queries) *Handler {
-	return &Handler{service: NewRoleService(queries)}
+func NewHandler(dbPool *pgxpool.Pool) *Handler {
+	return &Handler{service: NewRoleService(dbPool)}
 }
 
 // Create a new role
