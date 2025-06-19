@@ -31,7 +31,4 @@ packages:
 
       - db_type: "boolean"
         go_type: "bool"
-
-
-
-      
+        

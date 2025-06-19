@@ -42,7 +42,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	migrationsPath := "file://" + dir
+	migrationsPath := dir
 
 	switch command {
 	case "create":
@@ -100,6 +100,7 @@ func createMigration(migrationsPath, name string) {
 }
 
 func migrateUp(migrationsPath, dbURL string) {
+	migrationsPath = "file://" + migrationsPath
 	m, err := migrate.New(migrationsPath, dbURL)
 	if err != nil {
 		log.Fatalf("Failed to initialize migrate: %v", err)
@@ -111,6 +112,7 @@ func migrateUp(migrationsPath, dbURL string) {
 }
 
 func migrateDown(migrationsPath, dbURL string) {
+	migrationsPath = "file://" + migrationsPath
 	m, err := migrate.New(migrationsPath, dbURL)
 	if err != nil {
 		log.Fatalf("Failed to initialize migrate: %v", err)
@@ -122,6 +124,7 @@ func migrateDown(migrationsPath, dbURL string) {
 }
 
 func migrateSteps(migrationsPath, dbURL string, steps int) {
+	migrationsPath = "file://" + migrationsPath
 	m, err := migrate.New(migrationsPath, dbURL)
 	if err != nil {
 		log.Fatalf("Failed to initialize migrate: %v", err)
@@ -133,6 +136,7 @@ func migrateSteps(migrationsPath, dbURL string, steps int) {
 }
 
 func showVersion(migrationsPath, dbURL string) {
+	migrationsPath = "file://" + migrationsPath
 	m, err := migrate.New(migrationsPath, dbURL)
 	if err != nil {
 		log.Fatalf("Failed to initialize migrate: %v", err)
@@ -149,6 +153,7 @@ func showVersion(migrationsPath, dbURL string) {
 }
 
 func forceVersion(migrationsPath, dbURL string, version int) {
+	migrationsPath = "file://" + migrationsPath
 	m, err := migrate.New(migrationsPath, dbURL)
 	if err != nil {
 		log.Fatalf("Failed to initialize migrate: %v", err)

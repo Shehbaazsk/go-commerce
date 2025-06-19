@@ -8,12 +8,12 @@ import (
 )
 
 type CustomClaims struct {
-	UserID    uint64 `json:"user_id"`
+	UserID    int    `json:"user_id"`
 	TokenType string `json:"token_type"`
 	jwt.RegisteredClaims
 }
 
-func GenerateJWT(userID uint64) (string, error) {
+func GenerateJWT(userID int) (string, error) {
 	JWT_EXPIRATION := config.App.JWT_EXPIRATION
 	expirationTime := time.Now().Add(time.Duration(JWT_EXPIRATION) * time.Minute)
 
@@ -38,7 +38,7 @@ func GenerateJWT(userID uint64) (string, error) {
 	return tokenString, nil
 }
 
-func GenerateRefreshToken(userID uint64) (string, error) {
+func GenerateRefreshToken(userID int) (string, error) {
 	JWT_REFRESH_EXPIRATION := config.App.JWT_REFRESH_EXPIRATION
 	expirationTime := time.Now().Add(time.Duration(JWT_REFRESH_EXPIRATION) * time.Minute)
 

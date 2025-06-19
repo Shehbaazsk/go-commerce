@@ -63,33 +63,6 @@ func (q *Queries) GetRoleByID(ctx context.Context, id int32) (Role, error) {
 	return i, err
 }
 
-const getUserRoles = `-- name: GetUserRoles :many
-SELECT r.name
-FROM roles r
-INNER JOIN user_roles ur ON ur.role_id = r.id
-WHERE ur.user_id = $1
-`
-
-func (q *Queries) GetUserRoles(ctx context.Context, userID int32) ([]string, error) {
-	rows, err := q.db.Query(ctx, getUserRoles, userID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	items := []string{}
-	for rows.Next() {
-		var name string
-		if err := rows.Scan(&name); err != nil {
-			return nil, err
-		}
-		items = append(items, name)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
 const listRoles = `-- name: ListRoles :many
 SELECT id, name, description, is_active, created_at, updated_at FROM roles ORDER BY id
 `
@@ -185,13 +158,16 @@ func (q *Queries) ListRolesWithoutAdminAndStaff(ctx context.Context) ([]Role, er
 
 const updateRole = `-- name: UpdateRole :one
 UPDATE roles
-SET name = $1, description = $2 , is_active = $3
+SET 
+    name        = COALESCE($1, name),
+    description = COALESCE($2, description),
+    is_active   = COALESCE($3, is_active)
 WHERE id = $4
 RETURNING id, name, description, is_active, created_at, updated_at
 `
 
 type UpdateRoleParams struct {
-	Name        string      `json:"name"`
+	Name        pgtype.Text `json:"name"`
 	Description pgtype.Text `json:"description"`
 	IsActive    pgtype.Bool `json:"is_active"`
 	ID          int32       `json:"id"`

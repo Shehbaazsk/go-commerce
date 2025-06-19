@@ -38,7 +38,7 @@ func (h *Handler) UpdateRole(c *gin.Context) {
 		response.Error(c, http.StatusBadRequest, "Missing role ID", nil)
 		return
 	}
-	id, err := strconv.ParseInt(idParam, 10, 60)
+	id, err := strconv.Atoi(idParam)
 	if err != nil {
 		response.Error(c, http.StatusBadRequest, "Invalid role ID", err)
 		return
@@ -62,7 +62,7 @@ func (h *Handler) DeleteRole(c *gin.Context) {
 		response.Error(c, http.StatusBadRequest, "Missing role ID", nil)
 		return
 	}
-	id, err := strconv.ParseInt(idParam, 10, 60)
+	id, err := strconv.Atoi(idParam)
 	if err != nil {
 		response.Error(c, http.StatusBadRequest, "Invalid role ID", err)
 		return
@@ -79,7 +79,7 @@ func (h *Handler) GetRoleByID(c *gin.Context) {
 		response.Error(c, http.StatusBadRequest, "Missing role ID", nil)
 		return
 	}
-	id, err := strconv.ParseInt(idParam, 10, 60)
+	id, err := strconv.Atoi(idParam)
 	if err != nil {
 		response.Error(c, http.StatusBadRequest, "Invalid role ID", err)
 		return
@@ -97,7 +97,7 @@ func (h *Handler) GetAllRoles(c *gin.Context) {
 		response.Error(c, http.StatusUnauthorized, "Unauthorized", nil)
 		return
 	}
-	userID := userIDVal.(int64)
+	userID := userIDVal.(int)
 	roles, err := h.service.GetAll(c, userID)
 	if err != nil {
 		response.Error(c, http.StatusInternalServerError, "Failed to get roles", err)

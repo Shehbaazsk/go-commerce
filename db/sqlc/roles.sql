@@ -11,8 +11,11 @@ SELECT * FROM roles ORDER BY id;
 
 -- name: UpdateRole :one
 UPDATE roles
-SET name = $1, description = $2 , is_active = $3
-WHERE id = $4
+SET 
+    name        = COALESCE(sqlc.narg('name'), name),
+    description = COALESCE(sqlc.narg('description'), description),
+    is_active   = COALESCE(sqlc.narg('is_active'), is_active)
+WHERE id = sqlc.arg('id')
 RETURNING *;
 
 -- name: DeleteRole :exec
@@ -23,10 +26,3 @@ SELECT * FROM roles WHERE UPPER(name) != 'ADMIN' ORDER BY id;
 
 -- name: ListRolesWithoutAdminAndStaff :many
 SELECT * FROM roles WHERE UPPER(name) NOT IN ('ADMIN', 'STAFF') ORDER BY id;
-
-
--- name: GetUserRoles :many
-SELECT r.name
-FROM roles r
-INNER JOIN user_roles ur ON ur.role_id = r.id
-WHERE ur.user_id = $1;

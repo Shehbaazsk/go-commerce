@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
@@ -8,6 +9,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/shehbaazsk/go-commerce/config"
 	"github.com/shehbaazsk/go-commerce/internals/common/response"
+	"github.com/shehbaazsk/go-commerce/internals/constants"
 	"github.com/shehbaazsk/go-commerce/utils"
 )
 
@@ -44,8 +46,10 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		// Set claims into context
-		c.Set("userID", claims.UserID)
+		// // Set claims into context
+		c.Set(string(constants.UserIDKey), claims.UserID)
+		ctx := context.WithValue(c.Request.Context(), constants.UserIDKey, claims.UserID)
+		c.Request = c.Request.WithContext(ctx)
 		c.Next()
 	}
 }

@@ -2,7 +2,7 @@ MIGRATE_CMD = go run ./cmd/migrate/main.go
 
 migrate-create:
 	@if [ -z "$(NAME)" ]; then \
-		echo "Please provide NAME, e.g. make create NAME=create_users_table"; \
+		echo "Please provide NAME, e.g. make migrate-create NAME=create_users_table"; \
 		exit 1; \
 	fi
 	$(MIGRATE_CMD) create $(NAME)

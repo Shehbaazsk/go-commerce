@@ -2,6 +2,7 @@ package role
 
 import (
 	"context"
+	"errors"
 	"slices"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -13,7 +14,7 @@ import (
 
 func mapRoleToResponse(role db.Role) RoleResponse {
 	return RoleResponse{
-		ID:          int64(role.ID),
+		ID:          int(role.ID),
 		Name:        role.Name,
 		Description: converters.TextOrNil(role.Description),
 		CreatedAt:   converters.TimestampOrNil(role.CreatedAt),
@@ -23,10 +24,10 @@ func mapRoleToResponse(role db.Role) RoleResponse {
 
 type Service interface {
 	Create(ctx context.Context, req RoleRequest) (RoleResponse, error)
-	Update(ctx context.Context, id int64, req UpdateRoleRequest) (RoleResponse, error)
-	Delete(ctx context.Context, id int64) error
-	GetByID(ctx context.Context, id int64) (RoleResponse, error)
-	GetAll(ctx context.Context, userId int64) ([]RoleResponse, error)
+	Update(ctx context.Context, id int, req UpdateRoleRequest) (RoleResponse, error)
+	Delete(ctx context.Context, id int) error
+	GetByID(ctx context.Context, id int) (RoleResponse, error)
+	GetAll(ctx context.Context, userId int) ([]RoleResponse, error)
 }
 
 type service struct {
@@ -49,10 +50,10 @@ func (s *service) Create(ctx context.Context, req RoleRequest) (RoleResponse, er
 	}
 	return mapRoleToResponse(role), nil
 }
-func (s *service) Update(ctx context.Context, id int64, req UpdateRoleRequest) (RoleResponse, error) {
+func (s *service) Update(ctx context.Context, id int, req UpdateRoleRequest) (RoleResponse, error) {
 	roleParams := db.UpdateRoleParams{
 		ID:          int32(id),
-		Name:        req.Name,
+		Name:        converters.StringToPgText(req.Name),
 		Description: converters.StringToPgText(req.Description),
 		IsActive:    converters.BoolToPgBool(req.IsActive),
 	}
@@ -62,7 +63,7 @@ func (s *service) Update(ctx context.Context, id int64, req UpdateRoleRequest) (
 	}
 	return mapRoleToResponse(role), nil
 }
-func (s *service) Delete(ctx context.Context, id int64) error {
+func (s *service) Delete(ctx context.Context, id int) error {
 	err := s.queries.DeleteRole(ctx, int32(id))
 	if err != nil {
 		return err
@@ -70,7 +71,7 @@ func (s *service) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
-func (s *service) GetByID(ctx context.Context, id int64) (RoleResponse, error) {
+func (s *service) GetByID(ctx context.Context, id int) (RoleResponse, error) {
 	role, err := s.queries.GetRoleByID(ctx, int32(id))
 	if err != nil {
 		return RoleResponse{}, err
@@ -78,7 +79,7 @@ func (s *service) GetByID(ctx context.Context, id int64) (RoleResponse, error) {
 	return mapRoleToResponse(role), nil
 }
 
-func (s *service) GetAll(ctx context.Context, userID int64) ([]RoleResponse, error) {
+func (s *service) GetAll(ctx context.Context, userID int) ([]RoleResponse, error) {
 	userRoles, err := utils.GetUserRoles(ctx, s.queries, userID)
 	if err != nil {
 		return nil, err
@@ -89,7 +90,7 @@ func (s *service) GetAll(ctx context.Context, userID int64) ([]RoleResponse, err
 	} else if slices.Contains(userRoles, constants.RoleStaff) {
 		roles, err = s.queries.ListRolesWithoutAdminAndStaff(ctx)
 	} else {
-		roles, err = s.queries.ListRolesWithoutAdmin(ctx)
+		return nil, errors.New("user does not have permission to view roles")
 	}
 	if err != nil {
 		return nil, err

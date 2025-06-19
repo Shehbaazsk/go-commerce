@@ -36,6 +36,24 @@ type Country struct {
 	UpdatedAt pgtype.Timestamp `json:"updated_at"`
 }
 
+type CustomerProfile struct {
+	ID                int32  `json:"id"`
+	UserID            int32  `json:"user_id"`
+	ContactPreference []byte `json:"contact_preference"`
+}
+
+type Department struct {
+	ID        int32  `json:"id"`
+	Name      string `json:"name"`
+	ManagerID int32  `json:"manager_id"`
+}
+
+type Position struct {
+	ID          int32       `json:"id"`
+	Title       string      `json:"title"`
+	Description pgtype.Text `json:"description"`
+}
+
 type Role struct {
 	ID          int32            `json:"id"`
 	Name        string           `json:"name"`
@@ -43,6 +61,23 @@ type Role struct {
 	IsActive    pgtype.Bool      `json:"is_active"`
 	CreatedAt   pgtype.Timestamp `json:"created_at"`
 	UpdatedAt   pgtype.Timestamp `json:"updated_at"`
+}
+
+type SellerProfile struct {
+	ID            int32          `json:"id"`
+	UserID        int32          `json:"user_id"`
+	StoreName     string         `json:"store_name"`
+	GstNumber     pgtype.Text    `json:"gst_number"`
+	AverageRating pgtype.Numeric `json:"average_rating"`
+}
+
+type StaffProfile struct {
+	ID           int32       `json:"id"`
+	UserID       int32       `json:"user_id"`
+	EmployeeID   string      `json:"employee_id"`
+	DepartmentID int32       `json:"department_id"`
+	PositionID   int32       `json:"position_id"`
+	JoiningDate  pgtype.Date `json:"joining_date"`
 }
 
 type State struct {
@@ -64,6 +99,8 @@ type User struct {
 	IsActive     pgtype.Bool      `json:"is_active"`
 	CreatedAt    pgtype.Timestamp `json:"created_at"`
 	UpdatedAt    pgtype.Timestamp `json:"updated_at"`
+	CreatedBy    pgtype.Int4      `json:"created_by"`
+	UpdatedBy    pgtype.Int4      `json:"updated_by"`
 }
 
 type UserRole struct {

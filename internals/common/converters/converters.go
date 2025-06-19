@@ -1,6 +1,7 @@
 package converters
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgtype"
@@ -31,11 +32,11 @@ func Int4OrNil(i pgtype.Int4) *int32 {
 }
 
 // Int32ToInt4 converts *int32 to pgtype.Int4
-func Int32ToPgInt4(i *int32) pgtype.Int4 {
+func IntToPgInt4(i *int) pgtype.Int4 {
 	if i == nil {
 		return pgtype.Int4{Valid: false}
 	}
-	return pgtype.Int4{Int32: *i, Valid: true}
+	return pgtype.Int4{Int32: int32(*i), Valid: true}
 }
 
 // Int8OrNil converts pgtype.Int8 to *int64
@@ -47,11 +48,11 @@ func Int8OrNil(i pgtype.Int8) *int64 {
 }
 
 // Int64ToInt8 converts *int64 to pgtype.Int8
-func Int64ToPgInt8(i *int64) pgtype.Int8 {
+func IntToPgInt8(i *int) pgtype.Int8 {
 	if i == nil {
 		return pgtype.Int8{Valid: false}
 	}
-	return pgtype.Int8{Int64: *i, Valid: true}
+	return pgtype.Int8{Int64: int64(*i), Valid: true}
 }
 
 // Float8OrNil converts pgtype.Float8 to *float64
@@ -116,4 +117,20 @@ func TimeToPgDate(t *time.Time) pgtype.Date {
 		return pgtype.Date{Valid: false}
 	}
 	return pgtype.Date{Time: *t, Valid: true}
+}
+
+func ToJSONB(input map[string]interface{}) ([]byte, error) {
+	if input == nil {
+		return []byte("{}"), nil
+	}
+	return json.Marshal(input)
+}
+
+func FromJSONB(data []byte) (map[string]interface{}, error) {
+	var result map[string]interface{}
+	if len(data) == 0 {
+		return map[string]interface{}{}, nil
+	}
+	err := json.Unmarshal(data, &result)
+	return result, err
 }
